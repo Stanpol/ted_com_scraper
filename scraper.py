@@ -1,24 +1,59 @@
-# This is a template for a Python scraper on morph.io (https://morph.io)
-# including some code snippets below that you should find helpful
+from bs4 import BeautifulSoup
+import scraperwiki
 
-# import scraperwiki
-# import lxml.html
-#
-# # Read in a page
-# html = scraperwiki.scrape("http://foo.com")
-#
-# # Find something on the page using css selectors
-# root = lxml.html.fromstring(html)
-# root.cssselect("div[align='left']")
-#
-# # Write out to the sqlite database using scraperwiki library
-# scraperwiki.sqlite.save(unique_keys=['name'], data={"name": "susan", "occupation": "software developer"})
-#
-# # An arbitrary query against the database
-# scraperwiki.sql.select("* from data where 'name'='peter'")
+print("Scraping the latest page")
+html = scraperwiki.scrape("http://www.ted.com/talks/quick-list?page=1")
+soup = BeautifulSoup(html, 'lxml')
 
-# You don't have to do things with the ScraperWiki and lxml libraries.
-# You can use whatever libraries you want: https://morph.io/documentation/python
-# All that matters is that your final data is written to an SQLite database
-# called "data.sqlite" in the current working directory which has at least a table
-# called "data".
+talks = soup.find_all("div", attrs={"class": "col xs-12 quick-list__container-row"})
+for t in talks:
+	talk = t.find_all('a')
+	talk_url = talk[0]['href']
+	talk_name = talk[0].text
+	event_url = talk[1]['href']
+	event_name = talk[1].text
+	try:
+		link_low = talk[2]['href']
+		link_medium = talk[3]['href']
+		link_high = talk[4]['href']
+	except:
+		print("! No links available")
+		link_low = "no link"
+		link_medium = "no link"
+		link_high = "no link"
+	talk = t.find_all("div", attrs={"class": "col-xs-1"})
+	date = talk[0].text
+	time = talk[1].text
+	print(talk_name)
+
+	scraperwiki.sqlite.save(unique_keys=['talk_name'], data={"talk_name": talk_name, "talk_url": talk_url, "event_url": event_url, "event_name": event_name, "link_low": link_low, "link_medium": link_medium, "link_high": link_high, "date": date, "time": time})
+
+
+# Old talks:
+for i in xrange(2,64):
+	print("=============================Page: "+str(i))
+	html = scraperwiki.scrape("http://www.ted.com/talks/quick-list?page="+str(i))
+	soup = BeautifulSoup(html, 'lxml')
+
+	talks = soup.find_all("div", attrs={"class": "col xs-12 quick-list__container-row"})
+	for t in talks:
+		talk = t.find_all('a')
+		talk_url = talk[0]['href']
+		talk_name = talk[0].text
+		event_url = talk[1]['href']
+		event_name = talk[1].text
+		try:
+			link_low = talk[2]['href']
+			link_medium = talk[3]['href']
+			link_high = talk[4]['href']
+		except:
+			print("! No links available")
+			link_low = "no link"
+			link_medium = "no link"
+			link_high = "no link"
+		talk = t.find_all("div", attrs={"class": "col-xs-1"})
+		date = talk[0].text
+		time = talk[1].text
+		print(talk_name)
+
+		scraperwiki.sqlite.save(unique_keys=['talk_name'], data={"talk_name": talk_name, "talk_url": talk_url, "event_url": event_url, "event_name": event_name, "link_low": link_low, "link_medium": link_medium, "link_high": link_high, "date": date, "time": time})
