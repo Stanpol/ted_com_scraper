@@ -24,7 +24,7 @@ for t in talks:
 	talk = t.find_all("div", attrs={"class": "col-xs-1"})
 	date = talk[0].text
 	time = talk[1].text
-	print(talk_name)
+	print(talk_name.decode('utf-8'))
 
 	scraperwiki.sqlite.save(unique_keys=['talk_name'], data={"talk_name": talk_name, "talk_url": talk_url, "event_url": event_url, "event_name": event_name, "link_low": link_low, "link_medium": link_medium, "link_high": link_high, "date": date, "time": time})
 
@@ -54,6 +54,6 @@ for i in xrange(2,64):
 		talk = t.find_all("div", attrs={"class": "col-xs-1"})
 		date = talk[0].text
 		time = talk[1].text
-		print(talk_name)
+		print(talk_name.decode('utf-8'))
 
 		scraperwiki.sqlite.save(unique_keys=['talk_name'], data={"talk_name": talk_name, "talk_url": talk_url, "event_url": event_url, "event_name": event_name, "link_low": link_low, "link_medium": link_medium, "link_high": link_high, "date": date, "time": time})
