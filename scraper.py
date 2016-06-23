@@ -9,9 +9,9 @@ talks = soup.find_all("div", attrs={"class": "col xs-12 quick-list__container-ro
 for t in talks:
 	talk = t.find_all('a')
 	talk_url = talk[0]['href']
-	talk_name = talk[0].text
+	talk_name = talk[0].text.strip()
 	event_url = talk[1]['href']
-	event_name = talk[1].text
+	event_name = talk[1].text.strip()
 	try:
 		link_low = talk[2]['href']
 		link_medium = talk[3]['href']
@@ -22,8 +22,8 @@ for t in talks:
 		link_medium = "no link"
 		link_high = "no link"
 	talk = t.find_all("div", attrs={"class": "col-xs-1"})
-	date = talk[0].text
-	time = talk[1].text
+	date = talk[0].text.strip()
+	time = talk[1].text.strip()
 	print(talk_name.encode('utf-8'))
 
 	scraperwiki.sqlite.save(unique_keys=['talk_name'], data={"talk_name": talk_name, "talk_url": talk_url, "event_url": event_url, "event_name": event_name, "link_low": link_low, "link_medium": link_medium, "link_high": link_high, "date": date, "time": time})
